@@ -20,6 +20,9 @@ build-type:     Simple
 extra-source-files:
     README.md
     ChangeLog.md
+    app/User.hs
+    app/Repository.hs
+    app/Association.hs
 
 source-repository head
   type: git
@@ -45,7 +48,6 @@ executable graphmdsapi-exe
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
-    , graphmdsapi
     , aeson
     , Spock
     , text
@@ -61,5 +63,4 @@ test-suite graphmdsapi-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
-    , graphmdsapi
   default-language: Haskell2010
