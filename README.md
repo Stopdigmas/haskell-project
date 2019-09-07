@@ -4,13 +4,30 @@ Projeto criado para disciplina de Paradigmas da Universidade de Brasília, utili
 # Objetivo
 Simular uma API criada por outro membro da Universidade, no framework Ruby on Rails, utilizando haskell e realizando a integração com uma camada de front-end escrita em javascript por outro membro da Universidade;
 
+# Rodar o projeto
+
+Após a instalação do `gchi` e do `stack`, rode na raiz do projeto o comando
+
+```sh
+ stack gchi
+```
+Este comando vai instalar todas as dependências e iniciar uma sessão REPL. Assim que iniciar, faz o seguinte comando:
+
+```sh
+ main
+```
+subindo a API. O acesso a API entra-se em `localhost:8080`
 
 # Time da disciplina
 
-|Nome|Nome|Nome|Nome|Nome|
-|---|----------|---|----------------------------|---------------------|
-|[Bruna Pinos](https://github.com/brunapinos)| [Clarissa Lima](https://github.com/clarissalimab) | [Felipe Hargreaves](https://github.com/Hargre) |  [Mariana Pícolo](https://github.com/MarianaPicolo)|  [Romeu Antunes](https://github.com/RomeuCarvalhoAntunes)  |
-| ![image](https://user-images.githubusercontent.com/18054053/64374830-faeb2980-cffa-11e9-996d-7a2ed05fa1d6.png) |![image](https://user-images.githubusercontent.com/18054053/64374767-dbec9780-cffa-11e9-8c1f-9cf04cbdc8b4.png) | ![image](https://user-images.githubusercontent.com/18054053/64374790-e4dd6900-cffa-11e9-89fd-8e11e77bc2b1.png) | ![image](https://user-images.githubusercontent.com/18054053/64374808-eeff6780-cffa-11e9-98f1-c5dc53a67980.png) | ![image](https://user-images.githubusercontent.com/18054053/64374702-c11a2300-cffa-11e9-8445-3de0a887980f.png) |
+
+|[Bruna Pinos](https://github.com/brunapinos)| [Clarissa Lima](https://github.com/clarissalimab) | [Felipe Hargreaves](https://github.com/Hargre) |
+|:----:|:----:|:---:|
+| ![image](https://user-images.githubusercontent.com/18054053/64374830-faeb2980-cffa-11e9-996d-7a2ed05fa1d6.png) |![crarissa](https://user-images.githubusercontent.com/18364727/64478217-8b507800-d17b-11e9-91a9-a2cd0f7dec80.png) |![image](https://user-images.githubusercontent.com/18054053/64374790-e4dd6900-cffa-11e9-89fd-8e11e77bc2b1.png) |
+
+|  [Mariana Pícolo](https://github.com/MarianaPicolo)|  [Romeu Antunes](https://github.com/RomeuCarvalhoAntunes)  |
+|:----:|:----:|
+ |![image](https://user-images.githubusercontent.com/18054053/64374808-eeff6780-cffa-11e9-98f1-c5dc53a67980.png) | ![image](https://user-images.githubusercontent.com/18054053/64374702-c11a2300-cffa-11e9-8445-3de0a887980f.png) |
 
 ---
 
