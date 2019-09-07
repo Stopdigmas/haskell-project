@@ -22,6 +22,7 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
 Association json
     firstUserId    Int
     secondUserId   Int
+    repositoryId   Int
     cost           Int
     deriving Show
 |]

@@ -88,3 +88,21 @@ app = do
             Just theRepo -> do
                 newId <- runSQL $ insert theRepo
                 json $ object ["result" .= String "success", "id" .= newId]
+
+    get "associations" $ do
+        allAssociations <- runSQL $ selectList [] [Asc AssociationId]
+        json allAssociations
+
+    -- get ("associations" <//> var) $ \userId1 \UserId2 \RepositoryId -> do
+    --     maybeAssociation <- runSQL P.get associationCost :: ApiAction (Maybe Association)
+    --     case maybeAssociation of 
+    --         Nothing -> errorJson 2 "Could not find a matching association"
+    --         Just theAssociation ->  theAssociation
+
+    post "associations" $ do
+        maybeAssociation <- jsonBody :: ApiAction (Maybe Association)
+        case maybeAssociation of
+            Nothing -> errorJson 1 "Failed to parse request body as Association"
+            Just theAssociation -> do
+                newId <- runSQL $ insert theAssociation
+                json $ object ["result" .= String "success", "id" .= newId]

@@ -25,5 +25,6 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
 User json 
     name Text
     avatarUrl Text
+    repositoryId Int
     deriving Show
 |]
