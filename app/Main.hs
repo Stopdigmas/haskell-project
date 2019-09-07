@@ -29,13 +29,6 @@ import           User
 import           Repository
 import           Association
 
-share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
-Person json -- The json keyword will make Persistent generate sensible ToJSON and FromJSON instances for us.
-  name Text
-  age Int
-  deriving Show
-|]
-
 type Api = SpockM SqlBackend () () ()
 
 type ApiAction a = SpockAction SqlBackend () () a
@@ -44,7 +37,10 @@ main :: IO ()
 main = do
     pool <- runStdoutLoggingT $ createSqlitePool "api.db" 5
     spockCfg <- defaultSpockCfg () (PCPool pool) ()
-    runStdoutLoggingT $ runSqlPool (do runMigration migrateAll) pool
+    runStdoutLoggingT $ runSqlPool (do 
+                                    runMigration User.migrateAll 
+                                    runMigration Repository.migrateAll
+                                    runMigration Association.migrateAll) pool
     runSpock 8080 (spock spockCfg app)
 
 runSQL
@@ -63,14 +59,32 @@ errorJson code message =
 
 app :: Api
 app = do
-    get "people" $ do
-        allPeople <- runSQL $ selectList [] [Asc PersonId]
-        json allPeople
+    get "users" $ do
+        allUsers <- runSQL $ selectList [] [Asc UserId]
+        json allUsers
 
-    post "people" $ do
-        maybePerson <- jsonBody :: ApiAction (Maybe Person)
-        case maybePerson of
-            Nothing -> errorJson 1 "Failed to parse request body as Person"
-            Just thePerson -> do
-                newId <- runSQL $ insert thePerson
+    post "users" $ do
+        maybeUser <- jsonBody :: ApiAction (Maybe User)
+        case maybeUser of
+            Nothing -> errorJson 1 "Failed to parse request body as User"
+            Just theUser -> do
+                newId <- runSQL $ insert theUser
+                json $ object ["result" .= String "success", "id" .= newId]
+
+    get ("users" <//> var) $ \userName -> do
+        maybeUser <- runSQL $ P.get userName :: ApiAction (Maybe User)
+        case maybeUser of
+            Nothing -> errorJson 2 "Could not find a user with matching id"
+            Just theUser -> json theUser
+    
+    get "repositories" $ do
+        allRepos <- runSQL $ selectList [] [Asc RepositoryId]
+        json allRepos
+
+    post "repositories" $ do
+        maybeRepo <- jsonBody :: ApiAction (Maybe Repository)
+        case maybeRepo of
+            Nothing -> errorJson 1 "Failed to parse request body as Repository"
+            Just theRepo -> do
+                newId <- runSQL $ insert theRepo
                 json $ object ["result" .= String "success", "id" .= newId]
