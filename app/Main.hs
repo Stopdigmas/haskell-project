@@ -28,6 +28,7 @@ import           Database.Persist.TH
 import           User
 import           Repository
 import           Association
+import           GithubImports
 
 type Api = SpockM SqlBackend () () ()
 
