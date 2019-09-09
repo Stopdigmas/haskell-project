@@ -28,63 +28,64 @@ import           Database.Persist.TH
 import           User
 import           Repository
 import           Association
+import           GithubRequisition
 
--- type Api = SpockM SqlBackend () () ()
+type Api = SpockM SqlBackend () () ()
 
--- type ApiAction a = SpockAction SqlBackend () () a
+type ApiAction a = SpockAction SqlBackend () () a
 
--- main :: IO ()
--- main = do
---     pool <- runStdoutLoggingT $ createSqlitePool "api.db" 5
---     spockCfg <- defaultSpockCfg () (PCPool pool) ()
---     runStdoutLoggingT $ runSqlPool (do 
---                                     runMigration User.migrateAll 
---                                     runMigration Repository.migrateAll
---                                     runMigration Association.migrateAll) pool
---     runSpock 8080 (spock spockCfg app)
+main :: IO ()
+main = do
+    pool <- runStdoutLoggingT $ createSqlitePool "api.db" 5
+    spockCfg <- defaultSpockCfg () (PCPool pool) ()
+    runStdoutLoggingT $ runSqlPool (do 
+                                    runMigration User.migrateAll 
+                                    runMigration Repository.migrateAll
+                                    runMigration Association.migrateAll) pool
+    runSpock 8080 (spock spockCfg app)
 
--- runSQL
---     :: (HasSpock m, SpockConn m ~ SqlBackend)
---     => SqlPersistT (LoggingT IO) a -> m a
--- runSQL action = runQuery $ \conn -> runStdoutLoggingT $ runSqlConn action conn
+runSQL
+    :: (HasSpock m, SpockConn m ~ SqlBackend)
+    => SqlPersistT (LoggingT IO) a -> m a
+runSQL action = runQuery $ \conn -> runStdoutLoggingT $ runSqlConn action conn
 
 
--- errorJson :: Int -> Text -> ApiAction ()
--- errorJson code message =
---     json $
---         object
---         [ "result" .= String "failure"
---         , "error" .= object ["code" .= code, "message" .= message]
---         ]
+errorJson :: Int -> Text -> ApiAction ()
+errorJson code message =
+    json $
+        object
+        [ "result" .= String "failure"
+        , "error" .= object ["code" .= code, "message" .= message]
+        ]
 
--- app :: Api
--- app = do
---     get "users" $ do
---         allUsers <- runSQL $ selectList [] [Asc UserId]
---         json allUsers
+app :: Api
+app = do
+    get "users" $ do
+        allUsers <- runSQL $ selectList [] [Asc UserId]
+        json allUsers
 
---     post "users" $ do
---         maybeUser <- jsonBody :: ApiAction (Maybe User)
---         case maybeUser of
---             Nothing -> errorJson 1 "Failed to parse request body as User"
---             Just theUser -> do
---                 newId <- runSQL $ insert theUser
---                 json $ object ["result" .= String "success", "id" .= newId]
+    post "users" $ do
+        maybeUser <- jsonBody :: ApiAction (Maybe User)
+        case maybeUser of
+            Nothing -> errorJson 1 "Failed to parse request body as User"
+            Just theUser -> do
+                newId <- runSQL $ insert theUser
+                json $ object ["result" .= String "success", "id" .= newId]
 
---     get ("users" <//> var) $ \userName -> do
---         maybeUser <- runSQL $ P.get userName :: ApiAction (Maybe User)
---         case maybeUser of
---             Nothing -> errorJson 2 "Could not find a user with matching id"
---             Just theUser -> json theUser
+    get ("users" <//> var) $ \userName -> do
+        maybeUser <- runSQL $ P.get userName :: ApiAction (Maybe User)
+        case maybeUser of
+            Nothing -> errorJson 2 "Could not find a user with matching id"
+            Just theUser -> json theUser
     
---     get "repositories" $ do
---         allRepos <- runSQL $ selectList [] [Asc RepositoryId]
---         json allRepos
+    get "repositories" $ do
+        allRepos <- runSQL $ selectList [] [Asc RepositoryId]
+        json allRepos
 
---     post "repositories" $ do
---         maybeRepo <- jsonBody :: ApiAction (Maybe Repository)
---         case maybeRepo of
---             Nothing -> errorJson 1 "Failed to parse request body as Repository"
---             Just theRepo -> do
---                 newId <- runSQL $ insert theRepo
---                 json $ object ["result" .= String "success", "id" .= newId]
+    post "repositories" $ do
+        maybeRepo <- jsonBody :: ApiAction (Maybe Repository)
+        case maybeRepo of
+            Nothing -> errorJson 1 "Failed to parse request body as Repository"
+            Just theRepo -> do
+                newId <- runSQL $ insert theRepo
+                json $ object ["result" .= String "success", "id" .= newId]

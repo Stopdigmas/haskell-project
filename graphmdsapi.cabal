@@ -23,6 +23,7 @@ extra-source-files:
     app/User.hs
     app/Repository.hs
     app/Association.hs
+    app/GithubRequisition.hs
 
 source-repository head
   type: git
