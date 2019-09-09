@@ -24,10 +24,12 @@ import           Database.Persist        hiding (get) -- To avoid a naming clash
 import qualified Database.Persist        as P         -- We'll be using P.get later for GET /people/<id>.
 import           Database.Persist.Sqlite hiding (get)
 import           Database.Persist.TH
+import           Control.Monad.IO.Class (liftIO)
 
 import           User
 import           Repository
 import           Association
+import           Graph
 
 type Api = SpockM SqlBackend () () ()
 
@@ -56,6 +58,15 @@ errorJson code message =
         [ "result" .= String "failure"
         , "error" .= object ["code" .= code, "message" .= message]
         ]
+
+mapEntityToAssocs entity = map (\a -> entityVal a) entity
+
+data PathBody = Data {
+    fromUser :: Int,
+    toUser :: Int
+} deriving (Generic, Show)
+instance FromJSON PathBody
+instance ToJSON PathBody
 
 app :: Api
 app = do
@@ -106,3 +117,14 @@ app = do
             Just theAssociation -> do
                 newId <- runSQL $ insert theAssociation
                 json $ object ["result" .= String "success", "id" .= newId]
+
+    post "path" $ do
+        assocs <- runSQL $ selectList [] [Asc AssociationId]
+        maybePaths <- jsonBody :: ApiAction (Maybe PathBody)
+        case maybePaths of
+            Nothing -> errorJson 1 "what u doing"
+            Just thePaths -> do
+                liftIO $ do
+                    print $ doTheMagic (fromUser thePaths) (toUser thePaths) (mapEntityToAssocs assocs)
+                    print $ fromUser thePaths
+                json $ assocs

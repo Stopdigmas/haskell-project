@@ -1,8 +1,13 @@
+
 module Graph
 (
   Node,
   Graph,
+  createGraph,
+  buildNode,
   printGraph,
+  getIdsFromAssocs,
+  buildNodes,
   targetExistsInGraph,
   nodeExistsInList,
   graphNodesFromValues,
@@ -10,8 +15,13 @@ module Graph
   updateDistanceAndPredecessor,
   bfs,
   shortestDistance,
-  nodesFromBfs
+  nodesFromBfs,
+  doTheMagic
 ) where
+
+import Association
+import qualified Data.Set as Set
+
 
 data Node = Node {
   nodeValue :: Int,
@@ -21,6 +31,36 @@ data Node = Node {
 } deriving (Show)
 
 data Graph = Graph [Node] deriving (Show)
+
+
+
+getIdsFromAssocs :: [Association] -> [Int]
+getIdsFromAssocs assocs = Set.toList $ Set.fromList $ map (\a -> associationFirstUserId a) assocs
+
+buildNodes :: [Int] -> [Association] -> [Node]
+buildNodes values assocs =
+    map (\v -> buildNode (v) (filterAssocs v assocs)) values
+
+
+filterAssocs :: Int -> [Association] -> [Association]
+filterAssocs value assocs =
+    filter (\a -> associationFirstUserId a == value) assocs
+
+buildNode value assocs =
+  Node value [associationSecondUserId assoc | assoc <- assocs ] 0 0
+
+createGraph :: [Node] -> Graph
+createGraph nodes = Graph nodes
+
+doTheMagic :: Int -> Int -> [Association] -> [Int]
+doTheMagic fromUser toUser assocs = do
+  let graph = createGraph $ buildNodes ((getIdsFromAssocs $ (assocs))) (assocs)
+  let queue = graphNodesFromValues graph [fromUser]
+  let out = Graph queue
+  let seen = queue
+  let res = shortestDistance graph out queue seen toUser
+  let edges = nodesFromBfs res fromUser toUser []
+  edges
 
 -- Imprime cada nó de um grafo.
 printGraph :: Graph -> IO ()
