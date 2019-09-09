@@ -124,7 +124,4 @@ app = do
         case maybePaths of
             Nothing -> errorJson 1 "what u doing"
             Just thePaths -> do
-                liftIO $ do
-                    print $ doTheMagic (fromUser thePaths) (toUser thePaths) (mapEntityToAssocs assocs)
-                    print $ fromUser thePaths
-                json $ assocs
+                json $ object["result" .= doTheMagic (fromUser thePaths) (toUser thePaths) (mapEntityToAssocs assocs)]
