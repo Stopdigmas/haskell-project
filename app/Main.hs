@@ -29,6 +29,7 @@ import           User
 import           Repository
 import           Association
 import           GithubRequisition
+import           GithubRequisitionUsers
 
 type Api = SpockM SqlBackend () () ()
 

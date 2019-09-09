@@ -21,6 +21,6 @@ getGithubRepos = do
         (Right repos) -> putStrLn $ intercalate "\n\n" $ map formatRepo (Data.Vector.toList repos)
 
 formatRepo repo =
-    (Data.Text.unpack (Name.untagName (GitHub.repoName repo))) ++ "\t"
+    (Data.Text.unpack (Name.untagName (GitHub.repoName repo)))
 
 
