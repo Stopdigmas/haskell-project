@@ -60,6 +60,7 @@ executable graphmdsapi-exe
     , github
     , vector >=0.11.0.0
     , base-compat  >=0.9.3
+    , containers
   default-language: Haskell2010
 
 test-suite graphmdsapi-test
